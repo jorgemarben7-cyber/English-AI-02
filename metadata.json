@@ -1,0 +1,6 @@
+{
+  "name": "Ciencias Sociales",
+  "description": "Cuestionario interactivo y divertido de Ciencias Sociales para niños de primer grado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

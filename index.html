@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Cuestionario de Ciencias Sociales - 1° Grado</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Fredoka', 'Nunito', 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+      background: linear-gradient(135deg, #72d5f7 0%, #bcfb8b 50%, #ffd868 100%);
+      background-attachment: fixed;
+      padding: 16px;
+      overflow-x: hidden;
+      color: #2c3e50;
+    }
+
+    /* Fondo con nubes animadas flotantes */
+    .clouds-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .cloud {
+      position: absolute;
+      opacity: 0.35;
+      font-size: 55px;
+      animation: floatCloud 25s linear infinite;
+    }
+
+    .cloud:nth-child(1) { top: 8%; animation-duration: 32s; }
+    .cloud:nth-child(2) { top: 25%; font-size: 40px; animation-duration: 24s; animation-delay: -10s; }
+    .cloud:nth-child(3) { top: 75%; font-size: 65px; animation-duration: 38s; animation-delay: -5s; }
+
+    @keyframes floatCloud {
+      from { transform: translateX(-120px); }
+      to { transform: translateX(105vw); }
+    }
+
+    /* Contenedor principal de la tarjeta */
+    .quiz-card {
+      position: relative;
+      z-index: 10;
+      background: #ffffff;
+      width: 100%;
+      max-width: 650px;
+      border-radius: 36px;
+      padding: 28px 24px;
+      box-shadow: 0 20px 45px rgba(0, 70, 110, 0.22), 0 6px 12px rgba(0,0,0,0.06);
+      border: 5px solid #ffffff;
+      display: flex;
+      flex-direction: column;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.92) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Encabezado */
+    .quiz-header {
+      margin-bottom: 20px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .app-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ff6f3c;
+      text-shadow: 1px 1px 0 #ffe0cc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-points {
+      background: #fff4d1;
+      color: #d48806;
+      border: 2px solid #ffd666;
+      padding: 6px 14px;
+      border-radius: 50px;
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Barra de progreso con cohete */
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 700;
+      color: #4a5568;
+    }
+
+    .progress-track {
+      position: relative;
+      height: 22px;
+      background: #e2f0d9;
+      border-radius: 20px;
+      border: 3px solid #b7deb0;
+      overflow: visible;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4ade80, #22c55e);
+      border-radius: 16px;
+      width: 10%;
+      transition: width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .rocket-runner {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      transform: translate(-50%, -50%);
+      font-size: 26px;
+      transition: left 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    }
+
+    /* Área de la pregunta */
+    .question-box {
+      background: #f0f9ff;
+      border: 3px dashed #7dd3fc;
+      border-radius: 24px;
+      padding: 18px 16px;
+      margin-bottom: 22px;
+      text-align: center;
+      position: relative;
+    }
+
+    .question-number-tag {
+      display: inline-block;
+      background: #0284c7;
+      color: #ffffff;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .question-text {
+      font-size: 22px;
+      line-height: 1.35;
+      font-weight: 800;
+      color: #0f172a;
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .audio-btn {
+      margin-top: 8px;
+      background: #e0f2fe;
+      border: 2px solid #38bdf8;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #0369a1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .audio-btn:hover, .audio-btn:active {
+      background: #bae6fd;
+      transform: scale(1.04);
+    }
+
+    /* Opciones de respuesta */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .option-btn {
+      background: #ffffff;
+      border: 4px solid #cbd5e1;
+      border-radius: 24px;
+      padding: 16px 20px;
+      font-family: inherit;
+      font-size: 19px;
+      font-weight: 800;
+      color: #1e293b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 16px;
+      box-shadow: 0 6px 0 #94a3b8, 0 8px 16px rgba(0,0,0,0.06);
+      transition: transform 0.1s, border-color 0.2s, background-color 0.2s, box-shadow 0.1s;
+      outline: none;
+      min-height: 68px;
+      text-align: left;
+    }
+
+    .option-btn:hover {
+      border-color: #38bdf8;
+      background: #f8fafc;
+    }
+
+    .option-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #94a3b8;
+    }
+
+    .option-emoji {
+      font-size: 30px;
+      flex-shrink: 0;
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+
+    .option-text {
+      flex: 1;
+      line-height: 1.25;
+    }
+
+    /* Estado de respuesta correcta */
+    .option-btn.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #15803d !important;
+      box-shadow: 0 6px 0 #16a34a, 0 10px 22px rgba(34, 197, 94, 0.4) !important;
+      animation: pulseGreen 0.6s ease;
+    }
+
+    @keyframes pulseGreen {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* Estado de respuesta incorrecta */
+    .option-btn.incorrect {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #b91c1c !important;
+      box-shadow: 0 6px 0 #dc2626, 0 10px 20px rgba(239, 68, 68, 0.3) !important;
+      animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-3px, 0, 0); }
+      20%, 80% { transform: translate3d(5px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    /* Mensajes de feedback flotantes */
+    .feedback-banner {
+      margin-top: 18px;
+      padding: 12px 20px;
+      border-radius: 20px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: opacity 0.25s, transform 0.25s;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+    }
+
+    .feedback-banner.show-success {
+      opacity: 1;
+      transform: translateY(0);
+      background: #dcfce7;
+      color: #166534;
+      border: 3px solid #86efac;
+      animation: bounceSuccess 0.5s ease;
+    }
+
+    .feedback-banner.show-error {
+      opacity: 1;
+      transform: translateY(0);
+      background: #fee2e2;
+      color: #991b1b;
+      border: 3px solid #fca5a5;
+      animation: popError 0.4s ease;
+    }
+
+    @keyframes bounceSuccess {
+      0% { transform: scale(0.85); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes popError {
+      0% { transform: scale(0.9); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    /* Pantalla final de felicitaciones */
+    .finish-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 15px 10px;
+    }
+
+    .trophy-container {
+      font-size: 92px;
+      margin-bottom: 10px;
+      animation: trophyJump 1.2s ease-in-out infinite alternate;
+      filter: drop-shadow(0 10px 15px rgba(234, 179, 8, 0.45));
+    }
+
+    @keyframes trophyJump {
+      from { transform: translateY(0) scale(1) rotate(-3deg); }
+      to { transform: translateY(-16px) scale(1.1) rotate(3deg); }
+    }
+
+    .finish-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: #0284c7;
+      margin-bottom: 8px;
+    }
+
+    .finish-subtitle {
+      font-size: 20px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .score-badge {
+      background: #fef08a;
+      border: 3px dashed #eab308;
+      border-radius: 24px;
+      padding: 14px 28px;
+      font-size: 24px;
+      font-weight: 900;
+      color: #854d0e;
+      margin-bottom: 26px;
+      box-shadow: 0 4px 10px rgba(234, 179, 8, 0.25);
+    }
+
+    .restart-btn {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      border: 4px solid #34d399;
+      border-radius: 30px;
+      padding: 18px 42px;
+      font-family: inherit;
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #047857, 0 12px 24px rgba(16, 185, 129, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.15s;
+    }
+
+    .restart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 0 #047857, 0 16px 28px rgba(16, 185, 129, 0.45);
+    }
+
+    .restart-btn:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #047857;
+    }
+
+    /* Canvas para confeti */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .quiz-card { padding: 20px 16px; border-radius: 28px; }
+      .app-title { font-size: 18px; }
+      .question-text { font-size: 19px; min-height: 50px; }
+      .option-btn { font-size: 17px; padding: 13px 15px; min-height: 60px; gap: 12px; }
+      .option-emoji { font-size: 26px; }
+      .finish-title { font-size: 27px; }
+      .restart-btn { font-size: 20px; padding: 15px 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nubes animadas de fondo -->
+  <div class="clouds-container">
+    <div class="cloud">☁️</div>
+    <div class="cloud">⛅</div>
+    <div class="cloud">☁️</div>
+  </div>
+
+  <!-- Canvas para confeti de celebración -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Tarjeta principal del cuestionario -->
+  <main class="quiz-card" role="main">
+
+    <!-- Encabezado y progreso -->
+    <header class="quiz-header" id="quizHeader">
+      <div class="title-row">
+        <div class="app-title">🎒 Ciencias Sociales 1°</div>
+        <div class="badge-points" id="scoreBadge" aria-label="Estrellas ganadas">
+          <span>⭐</span> <span id="correctCounter">0</span> / 10
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-label-row">
+          <span id="questionStepLabel">Pregunta 1 de 10</span>
+          <span>¡Vamos explorador! 🧭</span>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="rocket-runner" id="rocketRunner">🚀</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenedor del Juego Activo -->
+    <section id="gameSection">
+      <!-- Caja de la pregunta -->
+      <div class="question-box">
+        <div class="question-number-tag" id="questionTag">Pregunta 1</div>
+        <h1 class="question-text" id="questionText">¿Cómo se llama el país donde vivimos?</h1>
+        <button class="audio-btn" id="listenBtn" type="button" title="Escuchar pregunta en voz alta">
+          <span>🔊</span> <span>Escuchar</span>
+        </button>
+      </div>
+
+      <!-- Cuadrícula de opciones de respuesta -->
+      <div class="options-grid" id="optionsGrid" role="group" aria-label="Opciones de respuesta">
+        <!-- Generado dinámicamente -->
+      </div>
+
+      <!-- Banner de retroalimentación inmediata -->
+      <div class="feedback-banner" id="feedbackBanner" role="status" aria-live="polite">
+        <!-- Mensajes dinámicos: "¡Excelente! 🌟" o "¡Casi! Intenta de nuevo 🤔" -->
+      </div>
+    </section>
+
+    <!-- Pantalla Final (al completar las 10 preguntas) -->
+    <section class="finish-screen" id="finishSection" aria-label="Pantalla de fin de juego">
+      <div class="trophy-container">🏆</div>
+      <h2 class="finish-title">¡FELICITACIONES! 🌟</h2>
+      <p class="finish-subtitle">¡Eres un super explorador de Ciencias Sociales!</p>
+      
+      <div class="score-badge" id="finalScoreText">
+        ¡Respondiste las 10 preguntas! 🎉
+      </div>
+
+      <button class="restart-btn" id="restartBtn" type="button">
+        <span>🔄</span> <span>Jugar de Nuevo</span>
+      </button>
+    </section>
+
+  </main>
+
+  <script>
+    /* ==========================================================
+       1. CONTENIDO Y LÓGICA DEL CUESTIONARIO (EXACTA DEL BRIEF)
+       ========================================================== */
+    const quizData = [
+      {
+        question: "¿Cómo se llama el país donde vivimos?",
+        correctAnswer: "Colombia",
+        options: [
+          { text: "Santamarta", emoji: "🏖️" },
+          { text: "Fundación", emoji: "🌴" },
+          { text: "Colombia", emoji: "🇨🇴" },
+          { text: "Magdalena", emoji: "🌊" }
+        ]
+      },
+      {
+        question: "¿Cómo se llama nuestro departamento?",
+        correctAnswer: "Magdalena",
+        options: [
+          { text: "Magdalena", emoji: "🏞️" },
+          { text: "Fundación", emoji: "🌴" },
+          { text: "Colombia", emoji: "🇨🇴" },
+          { text: "Santamarta", emoji: "🏖️" }
+        ]
+      },
+      {
+        question: "¿Cómo se llama nuestro municipio?",
+        correctAnswer: "Aracataca",
+        options: [
+          { text: "Aracataca", emoji: "🦋" },
+          { text: "Buenos aires", emoji: "🏡" },
+          { text: "Rubi", emoji: "💎" },
+          { text: "Zona Bananera", emoji: "🍌" }
+        ]
+      },
+      {
+        question: "El paisaje rural es:",
+        correctAnswer: "Solo plantas, animales y pocas personas",
+        options: [
+          { text: "Solo plantas, animales y pocas personas", emoji: "🌳🐄" },
+          { text: "Edificios, casas", emoji: "🏢🏠" },
+          { text: "Carreteras, automóviles", emoji: "🚗🛣️" },
+          { text: "Paisajes cultural o urbano", emoji: "🏙️" }
+        ]
+      },
+      {
+        question: "Hay vegetación y animales:",
+        correctAnswer: "Paisajes cultural o urbano",
+        options: [
+          { text: "Paisajes cultural o urbano", emoji: "🏞️" },
+          { text: "Pocas casas y maquinarias", emoji: "🚜🛖" },
+          { text: "Hay muchas casas, carreteras, carros edificios", emoji: "🏢🚗" },
+          { text: "Pescado con patacón", emoji: "🐟🍌" }
+        ]
+      },
+      {
+        question: "¿Qué región de Colombia representamos en el grado primero?",
+        correctAnswer: "R. Caribe",
+        options: [
+          { text: "R. Atlántico", emoji: "🌊" },
+          { text: "R. Pacifica", emoji: "🌴" },
+          { text: "R. amazónica", emoji: "🦜" },
+          { text: "R. Caribe", emoji: "☀️🏝️" }
+        ]
+      },
+      {
+        question: "¿Cuál es el plato típico de la región amazónica?",
+        correctAnswer: "Pescado con patacón",
+        options: [
+          { text: "Pescado con patacón", emoji: "🐟" },
+          { text: "Carne asada", emoji: "🥩" },
+          { text: "Chicharrón con yuca", emoji: "🍖" }
+        ]
+      },
+      {
+        question: "La mayor parte de la población es:",
+        correctAnswer: "Indígenas",
+        options: [
+          { text: "Indígenas", emoji: "🏹🌿" },
+          { text: "Africanos", emoji: "🥁🌍" },
+          { text: "Mulatos", emoji: "🤝" }
+        ]
+      },
+      {
+        question: "¿A qué se dedican la población amazónica?",
+        correctAnswer: "Pescar",
+        options: [
+          { text: "Jugar", emoji: "⚽" },
+          { text: "Cazar", emoji: "🏹" },
+          { text: "Pescar", emoji: "🎣" }
+        ]
+      },
+      {
+        question: "¿Cómo se llama el río que lo atraviesa?",
+        correctAnswer: "R. Amazonas",
+        options: [
+          { text: "R. Magdalena", emoji: "🌊" },
+          { text: "R. Amazonas", emoji: "🌿💧" },
+          { text: "R. Sinú", emoji: "🛶" }
+        ]
+      }
+    ];
+
+    /* ==========================================================
+       2. REPRODUCTOR DE SONIDOS CON WEB AUDIO API (100% CÓDIGO)
+       ========================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            this.ctx = new AudioContextClass();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Sonido alegre de acierto (Arpegio C5 - E5 - G5 - C6 tipo campanilla mágica)
+      playSuccess() {
+        this.init();
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // Do, Mi, Sol, Do agudo
+        const now = this.ctx.currentTime;
+
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+
+          gain.gain.setValueAtTime(0, now + idx * 0.09);
+          gain.gain.linearRampToValueAtTime(0.22, now + idx * 0.09 + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.35);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(now + idx * 0.09);
+          osc.stop(now + idx * 0.09 + 0.38);
+        });
+      }
+
+      // Sonido suave y juguetón de fallo (resbalón simpático no frustrante)
+      playFail() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(170, now + 0.28);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.32);
+      }
+
+      // Fanfarria triunfal al ganar el juego
+      playFanfare() {
+        this.init();
+        if (!this.ctx) return;
+        const fanfareNotes = [
+          { f: 523.25, d: 0.14 },
+          { f: 659.25, d: 0.14 },
+          { f: 783.99, d: 0.14 },
+          { f: 1046.50, d: 0.45 }
+        ];
+        const now = this.ctx.currentTime;
+        let t = now;
+
+        fanfareNotes.forEach((item) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(item.f, t);
+
+          gain.gain.setValueAtTime(0.001, t);
+          gain.gain.linearRampToValueAtTime(0.3, t + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + item.d);
+
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+
+          osc.start(t);
+          osc.stop(t + item.d + 0.05);
+          t += item.d * 0.95;
+        });
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    /* ==========================================================
+       3. SISTEMA DE CONFETI EN CANVAS (SIN DEPENDENCIAS EXTERNAS)
+       ========================================================== */
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimationId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function launchConfetti(count = 70, continuous = false) {
+      const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
+      for (let i = 0; i < count; i++) {
+        confettiParticles.push({
+          x: window.innerWidth * (0.3 + Math.random() * 0.4),
+          y: window.innerHeight * 0.45,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.8) * 14 - 3,
+          size: Math.random() * 10 + 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 15,
+          alpha: 1,
+          shape: Math.random() > 0.4 ? 'rect' : 'circle'
+        });
+      }
+
+      if (!confettiAnimationId) {
+        animateConfetti(continuous);
+      }
+    }
+
+    function animateConfetti(continuous) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = confettiParticles.length - 1; i >= 0; i--) {
+        const p = confettiParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35; // Gravedad
+        p.vx *= 0.98; // Resistencia
+        p.rotation += p.rotationSpeed;
+        p.alpha -= 0.012;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(p.alpha, 0);
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+
+        if (p.shape === 'rect') {
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        if (p.alpha <= 0 || p.y > canvas.height + 30) {
+          confettiParticles.splice(i, 1);
+        }
+      }
+
+      if (confettiParticles.length > 0) {
+        confettiAnimationId = requestAnimationFrame(() => animateConfetti(continuous));
+      } else {
+        cancelAnimationFrame(confettiAnimationId);
+        confettiAnimationId = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    /* ==========================================================
+       4. CONTROLADOR DEL CUESTIONARIO Y ESTADO
+       ========================================================== */
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let isWaitingNext = false;
+
+    // Referencias a elementos del DOM
+    const questionTextEl = document.getElementById('questionText');
+    const questionTagEl = document.getElementById('questionTag');
+    const questionStepLabel = document.getElementById('questionStepLabel');
+    const optionsGridEl = document.getElementById('optionsGrid');
+    const feedbackBannerEl = document.getElementById('feedbackBanner');
+    const progressFillEl = document.getElementById('progressFill');
+    const rocketRunnerEl = document.getElementById('rocketRunner');
+    const correctCounterEl = document.getElementById('correctCounter');
+    const gameSectionEl = document.getElementById('gameSection');
+    const finishSectionEl = document.getElementById('finishSection');
+    const quizHeaderEl = document.getElementById('quizHeader');
+    const listenBtnEl = document.getElementById('listenBtn');
+    const restartBtnEl = document.getElementById('restartBtn');
+
+    // Inicializar juego
+    function initGame() {
+      currentQuestionIndex = 0;
+      score = 0;
+      isWaitingNext = false;
+      correctCounterEl.textContent = '0';
+      gameSectionEl.style.display = 'block';
+      finishSectionEl.style.display = 'none';
+      quizHeaderEl.style.display = 'block';
+      loadQuestion();
+    }
+
+    // Cargar la pregunta actual
+    function loadQuestion() {
+      isWaitingNext = false;
+      clearFeedback();
+
+      const q = quizData[currentQuestionIndex];
+      const total = quizData.length;
+      const progressPercent = ((currentQuestionIndex + 1) / total) * 100;
+
+      // Actualizar número y textos
+      questionTagEl.textContent = `Pregunta ${currentQuestionIndex + 1}`;
+      questionTextEl.textContent = q.question;
+      questionStepLabel.textContent = `Pregunta ${currentQuestionIndex + 1} de ${total}`;
+
+      // Actualizar barra de progreso y cohete
+      progressFillEl.style.width = `${progressPercent}%`;
+      rocketRunnerEl.style.left = `${progressPercent}%`;
+
+      // Renderizar botones de opciones
+      optionsGridEl.innerHTML = '';
+      q.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'option-btn';
+        btn.innerHTML = `
+          <span class="option-emoji">${opt.emoji}</span>
+          <span class="option-text">${opt.text}</span>
+        `;
+
+        btn.addEventListener('click', () => handleSelectOption(btn, opt.text, q.correctAnswer));
+        optionsGridEl.appendChild(btn);
+      });
+    }
+
+    // Manejar selección de respuesta
+    function handleSelectOption(buttonEl, selectedText, correctAnswer) {
+      if (isWaitingNext) return; // Evitar clicks duplicados
+
+      sound.init(); // Asegurar contexto de audio desbloqueado
+
+      // Limpiar el texto seleccionado para comparar (ignorando emojis o espacios residuales)
+      const isCorrect = selectedText.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+
+      if (isCorrect) {
+        // --- CASO RESPUESTA CORRECTA ---
+        isWaitingNext = true;
+        buttonEl.classList.remove('incorrect');
+        buttonEl.classList.add('correct');
+
+        score++;
+        correctCounterEl.textContent = score;
+
+        // Sonido alegre de acierto
+        sound.playSuccess();
+
+        // Confeti animado
+        launchConfetti(85);
+
+        // Feedback gigante de felicitación
+        showFeedback("¡Excelente! 🌟", true);
+
+        // Desactivar temporalmente otros botones
+        const allButtons = optionsGridEl.querySelectorAll('.option-btn');
+        allButtons.forEach(btn => {
+          if (btn !== buttonEl) btn.style.opacity = '0.6';
+          btn.style.pointerEvents = 'none';
+        });
+
+        // Pasar a la siguiente pregunta después de 1.6 segundos
+        setTimeout(() => {
+          currentQuestionIndex++;
+          if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+          } else {
+            showFinalScreen();
+          }
+        }, 1600);
+
+      } else {
+        // --- CASO RESPUESTA INCORRECTA ---
+        buttonEl.classList.remove('correct');
+        buttonEl.classList.add('incorrect');
+
+        // Sonido juguetón de error
+        sound.playFail();
+
+        // Feedback alentador
+        showFeedback("¡Casi! Intenta de nuevo 🤔", false);
+
+        // Quitar la clase de animación 'shake' y permitir reintentar
+        setTimeout(() => {
+          buttonEl.classList.remove('incorrect');
+        }, 750);
+      }
+    }
+
+    // Mostrar mensaje de feedback
+    function showFeedback(message, isSuccess) {
+      feedbackBannerEl.textContent = message;
+      feedbackBannerEl.className = 'feedback-banner ' + (isSuccess ? 'show-success' : 'show-error');
+    }
+
+    function clearFeedback() {
+      feedbackBannerEl.textContent = '';
+      feedbackBannerEl.className = 'feedback-banner';
+    }
+
+    // Pantalla final con trofeo
+    function showFinalScreen() {
+      gameSectionEl.style.display = 'none';
+      finishSectionEl.style.display = 'flex';
+
+      // Cohete al 100%
+      progressFillEl.style.width = '100%';
+      rocketRunnerEl.style.left = '100%';
+      questionStepLabel.textContent = "¡Cuestionario Completado! 🎉";
+
+      sound.playFanfare();
+      launchConfetti(120);
+
+      // Lanzar ráfagas adicionales de confeti de celebración
+      setTimeout(() => launchConfetti(90), 800);
+      setTimeout(() => launchConfetti(90), 1600);
+    }
+
+    // Función de accesibilidad: Leer pregunta en voz alta con Web Speech API
+    listenBtnEl.addEventListener('click', () => {
+      sound.init();
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // Cancelar lecturas previas
+        const textToRead = quizData[currentQuestionIndex].question;
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+        utterance.lang = 'es-CO'; // Español colombiano / hispano
+        utterance.rate = 0.85;    // Velocidad pausada y clara para niños de 6-7 años
+        utterance.pitch = 1.1;    // Tono ligeramente más amigable
+        window.speechSynthesis.speak(utterance);
+      } else {
+        showFeedback("Pregunta: " + quizData[currentQuestionIndex].question, true);
+      }
+    });
+
+    // Botón Jugar de Nuevo
+    restartBtnEl.addEventListener('click', () => {
+      sound.init();
+      initGame();
+    });
+
+    // Iniciar al cargar el documento
+    window.addEventListener('DOMContentLoaded', initGame);
+  </script>
+</body>
+</html>
